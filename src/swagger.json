@@ -1,0 +1,206 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "BODHI METADATA SERVICE",
+    "description": "This service is used to manage Clinic & Doctor Details of BODHI Application ",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "securityDefinitions": {
+    "JWT": {
+      "type": "apiKey",
+      "name": "x-access-token",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "JWT": []
+    }
+  ],
+  "responses": {
+    "UnauthorizedError": {
+      "description": "Access token is missing or invalid"
+    }
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Metadata",
+      "description": "API for users in the system"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/clinic": {
+      "get": {
+        "tags": [
+          "Clinic Details"
+        ],
+        "summary": "Get all clinics in system",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "viewClinics",
+        "produces": "application/xml,application/json",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Users"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Add Clinic"
+        ],
+        "summary": "Insert clinic details into system",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "insertClinic",
+        "produces": "application/xml,application/json",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": "true",
+            "description": "Enter clinic details"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Users"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update clinic details",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "updateClinic",
+        "produces": "application/xml,application/json",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": "true",
+            "description": "Update clinic"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Users"
+            }
+          }
+        }
+      }
+    },
+    "/user/{email_id}": {
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Delete users in system",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "deleteUser",
+        "produces": "application/xml,application/json",
+        "parameters": [
+          {
+            "name": "email_id",
+            "in": "path",
+            "required": "true",
+            "description": "Delete user"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Users"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "View my details",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "viewUser",
+        "produces": "application/xml,application/json",
+        "parameters": [
+          {
+            "name": "email_id",
+            "in": "path",
+            "required": "true",
+            "description": "View my Details"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Users"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "required": [
+        "email",
+        "_id"
+      ],
+      "properties": {
+        "email_id": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "user_type": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "dob": {
+          "type": "date"
+        },
+        "address": {
+          "type": "string"
+        },
+        "contact_no": {
+          "type": "string"
+        }
+      }
+    },
+    "Users": {
+      "type": "array",
+      "$ref": "#/definitions/User"
+    }
+  }
+}
