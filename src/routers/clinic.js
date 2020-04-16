@@ -10,7 +10,10 @@ router.post("/", validate_clinic(), (req, res) => {
   } else {
     var clinic = new Clinic();
     clinic.name = req.body.name;
-    clinic.address = req.body.address;
+    clinic.email_id = req.body.email_id;
+    clinic.street = req.body.street;
+    clinic.city = req.body.city;
+    clinic.postcode = req.body.postcode;
     clinic.contact_no = req.body.contact_no;
     clinic.about = req.body.about;
     clinic.save().then((clinic_details) => {
@@ -21,7 +24,7 @@ router.post("/", validate_clinic(), (req, res) => {
   }
 })
 
-router.get("/", validate_clinic(), (req, res) => {
+router.get("/", (req, res) => {
   Clinic.find().then((clinic) => {
     res.json({
       status: "success",
@@ -36,7 +39,25 @@ router.get("/", validate_clinic(), (req, res) => {
   });
 });
 
-router.put("/", (req, res) => {
+router.get("/name/:name", (req, res) => {
+  const name = req.params.name.toLowerCase();
+  Clinic.find({ name }).then((clinic) => {
+    res.send(clinic);
+  }).catch((error) => {
+    res.status(400).send({ message: error.message || "Error occurred while retrieving clinic data." });
+  });
+});
+
+router.get("/street/:street", (req, res) => {
+  const street = req.params.street;
+  Clinic.find({ street }).then((clinic) => {
+    res.send(clinic);
+  }).catch((error) => {
+    res.status(400).send({ message: error.message || "Error occurred while retrieving clinic data." });
+  });
+});
+
+router.put("/", validate_clinic(), (req, res) => {
   Clinic.findOneAndUpdate({ name: req.body.name }, { address: req.body.address, contact_no: req.body.contact_no, about: req.body.about }).then((clinic_details) => {
     res.status(201).send(clinic_details);
   }).catch((error) => {

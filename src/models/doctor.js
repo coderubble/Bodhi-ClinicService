@@ -1,28 +1,18 @@
 const mongoose = require("../db/database");
 const Schema = mongoose.Schema;
-const clinicSchema = new Schema({
-  name: {
-    type: String,
-    lowercase:true,
-    required: true,
-    unique: true
-  },
-  email_id: {
+const doctorSchema = new Schema({
+  first_name: {
     type: String,
     required: true,
     unique: true
   },
-  street: {
+  last_name: {
     type: String,
-    lowercase:true,
-    required: true
+    required: true,
+    unique: true
   },
-  city: {
+  address: {
     type: String,
-    required: true
-  },
-  postcode: {
-    type: Number,
     required: true
   },
   contact_no: {
@@ -31,5 +21,5 @@ const clinicSchema = new Schema({
   },
   about: String
 })
-const Clinic = mongoose.model('clinic', clinicSchema);
-module.exports = Clinic;
+const Doctor = mongoose.model('doctor', doctorSchema);
+module.exports = Doctor;
