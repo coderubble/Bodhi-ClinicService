@@ -3,6 +3,7 @@ const router = express.Router();
 const Clinic = require("../models/clinic");
 const { validationResult } = require("express-validator/check");
 const { validate_clinic } = require("../middleware/validate_clinic");
+const redis = require("redis");
 router.post("/", validate_clinic(), (req, res) => {
   const validationErrors = validationResult(req);
   if (!validationErrors.isEmpty()) {
@@ -34,26 +35,51 @@ router.get("/", (req, res) => {
   }).catch((error) => {
     res.json({
       status: "error",
-      message: err,
+      message: error,
     });
   });
 });
 
 router.get("/name/:name", (req, res) => {
   const name = req.params.name.toLowerCase();
-  Clinic.find({ name }).then((clinic) => {
+  Clinic.find({ name }).skip(0).limit(10).select({ "name": 1 }).then((clinic) => {
     res.send(clinic);
   }).catch((error) => {
     res.status(400).send({ message: error.message || "Error occurred while retrieving clinic data." });
   });
 });
 
-router.get("/street/:street", (req, res) => {
-  const street = req.params.street;
-  Clinic.find({ street }).then((clinic) => {
-    res.send(clinic);
-  }).catch((error) => {
-    res.status(400).send({ message: error.message || "Error occurred while retrieving clinic data." });
+router.get("/city/:city", (req, res) => {
+  const city = req.params.city;
+  // Clinic.find({ city }).skip(0).limit(10).select({ "name": 1, "city": 1 }).then((clinic) => {
+  let client = redis.createClient({ port: 6379, host: "192.168.99.100" });
+  client.on('connect', function () {
+    console.log("Connected to Redis");
+  })
+  
+  client.get("clinic", function (err, obj) {
+    if (!obj) {
+      console.log('Data not in Redis cache');
+      client.set("clinic", '', function () {
+        console.log('Set key');
+      })
+      Clinic.find({ city }).skip(0).limit(10).select({ "name": 1, "city": 1 }).then((clinic) => {
+        Object.entries(clinic).forEach(([key, value]) => console.log(`>>>>>>${key}: ${value}`));
+        client.set("clinic", JSON.stringify(clinic), function (err, reply) {
+          if (err) {
+            console.log(`Redis set error:${err}`);
+          }
+          console.log(`Redis data saved:${reply}`);
+        })
+        res.send(clinic);
+      }).catch((error) => {
+        res.status(400).send({ message: error.message || "Error occurred while retrieving clinic data." });
+      });
+    }
+    else {
+      console.log("From redis cache");
+      res.send(JSON.parse(obj));
+    }
   });
 });
 
@@ -64,4 +90,6 @@ router.put("/", validate_clinic(), (req, res) => {
     res.status(400).send(error);
   })
 })
+
+
 module.exports = router;

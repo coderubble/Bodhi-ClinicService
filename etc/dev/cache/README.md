@@ -1,6 +1,6 @@
 ## redis on Docker
 ```
-$ docker run --name metadatacache -p 6379:6379 --rm -d redis
+$ docker run --name cliniccache -p 6379:6379 --rm -d redis
 ```
 ## Connecting using cli
 ```

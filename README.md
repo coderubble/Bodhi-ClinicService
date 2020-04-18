@@ -1,4 +1,4 @@
-# BodhMetadataService
+# BodhClinicService
 ## Overview
 This Service is used to manage clinic & doctor details of Bodhi application.
 

@@ -1,5 +1,5 @@
 {
-  "name": "BodhiMetadataService",
+  "name": "BodhiClinicService",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,15 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/coderubble/BodhiMetadataService.git"
+    "url": "git+https://github.com/coderubble/BodhiClinicService.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/coderubble/BodhiMetadataService/issues"
+    "url": "https://github.com/coderubble/BodhiClinicService/issues"
   },
-  "homepage": "https://github.com/coderubble/BodhiMetadataService#readme",
+  "homepage": "https://github.com/coderubble/BodhiClinicService#readme",
   "dependencies": {
     "axios": "^0.19.2",
     "dotenv": "^8.2.0",
@@ -26,6 +26,7 @@
     "express-validator": "^6.4.0",
     "mongodb": "^3.5.6",
     "mongoose": "^5.9.9",
+    "redis": "^3.0.2",
     "swagger-ui-express": "^4.1.4"
   },
   "devDependencies": {

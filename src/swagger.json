@@ -30,7 +30,7 @@
   "basePath": "/",
   "tags": [
     {
-      "name": "Metadata",
+      "name": "Clinic",
       "description": "API for clinic/doctor in the system"
     }
   ],
@@ -140,18 +140,18 @@
         }
       }
     },
-    "/clinic/street/{street}": {
+    "/clinic/city/{city}": {
       "get": {
         "tags": [
-          "Search Clinic details by Street"
+          "Search Clinic details by city"
         ],
-        "summary": "View Clinic details by Street Name/No.",
+        "summary": "View Clinic details by city Name/No.",
         "description": "This can only be done by the logged in user.",
-        "operationId": "viewClinicByStreet",
+        "operationId": "viewClinicBycity",
         "produces": "application/xml,application/json",
         "parameters": [
           {
-            "name": "street",
+            "name": "city",
             "in": "path",
             "required": "true",
             "description": "View Clinic Details"
