@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "version": "1.0.0",
-    "title": "BODHI METADATA SERVICE",
+    "title": "BODHI CLINIC SERVICE",
     "description": "This service is used to manage Clinic & Doctor Details of BODHI Application ",
     "license": {
       "name": "MIT",
@@ -31,7 +31,11 @@
   "tags": [
     {
       "name": "Clinic",
-      "description": "API for clinic/doctor in the system"
+      "description": "API for Clinic details in the system"
+    },
+    {
+      "name": "Doctor",
+      "description": "API for Doctor details in the system"
     }
   ],
   "schemes": [
@@ -47,7 +51,7 @@
     "/clinic": {
       "get": {
         "tags": [
-          "View Clinic Details"
+          "Clinic"
         ],
         "summary": "Get all clinics in system",
         "description": "This can only be done by the logged in user.",
@@ -64,7 +68,7 @@
       },
       "post": {
         "tags": [
-          "Add Clinic"
+          "Clinic"
         ],
         "summary": "Insert clinic details into system",
         "description": "This can only be done by the logged in user.",
@@ -89,7 +93,7 @@
       },
       "put": {
         "tags": [
-          "Update Clinic details"
+          "Clinic"
         ],
         "summary": "Update clinic details",
         "description": "This can only be done by the logged in user.",
@@ -116,7 +120,7 @@
     "/clinic/name/{name}": {
       "get": {
         "tags": [
-          "Search Clinic details by name"
+          "Clinic"
         ],
         "summary": "View Clinic details by name",
         "description": "This can only be done by the logged in user.",
@@ -143,7 +147,7 @@
     "/clinic/city/{city}": {
       "get": {
         "tags": [
-          "Search Clinic details by city"
+          "Clinic"
         ],
         "summary": "View Clinic details by city Name/No.",
         "description": "This can only be done by the logged in user.",
@@ -168,9 +172,40 @@
       }
     },
     "/doctor/{id}": {
+      "post": {
+        "tags": [
+          "Doctor"
+        ],
+        "summary": "Insert doctor details into system",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "insertDcotor",
+        "produces": "application/xml,application/json",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": "true",
+            "description": "Enter Clinic ID"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": "true",
+            "description": "Enter doctor details"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Dcotor"
+            }
+          }
+        }
+      },
       "get": {
         "tags": [
-          "Get Doctor Details by ID"
+          "Doctor"
         ],
         "summary": "View Doctor Details",
         "description": "This can only be done by the logged in user.",
@@ -189,33 +224,6 @@
             "description": "OK",
             "schema": {
               "$ref": "#/definitions/Doctor"
-            }
-          }
-        }
-      }
-    },
-    "/doctor/": {
-      "post": {
-        "tags": [
-          "Add Doctor"
-        ],
-        "summary": "Insert doctor details into system",
-        "description": "This can only be done by the logged in user.",
-        "operationId": "insertDcotor",
-        "produces": "application/xml,application/json",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": "true",
-            "description": "Enter doctor details"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/Dcotor"
             }
           }
         }

@@ -10,13 +10,24 @@ router.post("/", validate_clinic(), (req, res) => {
     res.status(400).send(`Validation errors: ${JSON.stringify(validationErrors.array())}`);
   } else {
     var clinic = new Clinic();
-    clinic.name = req.body.name;
-    clinic.email_id = req.body.email_id;
-    clinic.street = req.body.street;
-    clinic.city = req.body.city;
-    clinic.postcode = req.body.postcode;
-    clinic.contact_no = req.body.contact_no;
-    clinic.about = req.body.about;
+    const body = req.body;
+    clinic.name = body.name;
+    clinic.email_id = body.email_id;
+    clinic.street = body.street;
+    clinic.city = body.city;
+    clinic.postcode = body.postcode;
+    clinic.contact_no = body.contact_no;
+    clinic.about = body.about;
+    clinic.doctors = body.doctors.map(doctor => {
+      const { first_name, last_name, address, contact_no, about } = doctor;
+      return {
+        first_name,
+        last_name,
+        address,
+        contact_no,
+        about
+      };
+    });
     clinic.save().then((clinic_details) => {
       res.status(201).send(clinic_details);
     }).catch((error) => {
@@ -56,7 +67,7 @@ router.get("/city/:city", (req, res) => {
   client.on('connect', function () {
     console.log("Connected to Redis");
   })
-  
+
   client.get("clinic", function (err, obj) {
     if (!obj) {
       console.log('Data not in Redis cache');
@@ -90,6 +101,5 @@ router.put("/", validate_clinic(), (req, res) => {
     res.status(400).send(error);
   })
 })
-
 
 module.exports = router;

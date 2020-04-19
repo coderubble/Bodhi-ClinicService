@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const Doctor = require("../models/doctor");
+const Clinic = require("../models/clinic");
 const { validationResult } = require("express-validator/check");
 const { validate_doctor } = require("../middleware/validate_doctor");
-router.post("/", validate_doctor(), (req, res) => {
+router.post("/:id", validate_doctor(), async (req, res) => {
   const validationErrors = validationResult(req);
   if (!validationErrors.isEmpty()) {
     res.status(400).send(`Validation errors: ${JSON.stringify(validationErrors.array())}`);
@@ -15,7 +16,21 @@ router.post("/", validate_doctor(), (req, res) => {
     doctor.contact_no = req.body.contact_no;
     doctor.about = req.body.about;
     doctor.save().then((doctor_details) => {
-      res.status(201).send(doctor_details);
+      const clinic_id = req.params.id;
+      console.log(`>>>${clinic_id}`);
+      console.log(`>>>>>${doctor_details._id}`);
+      Clinic.findOneAndUpdate(
+        { _id: req.params.id }, { doctors: doctor_details._id }, { new: true })
+        .then(function (err, success) {
+          if (err) {
+            res.send(err);
+          }
+          res.status(201);
+        })
+      // .catch((err) => {
+      //   res.status(400).send(err);
+      // })
+      // res.status(201).send(doctor_details);
     }).catch((error) => {
       res.status(400).send(error);
     })
