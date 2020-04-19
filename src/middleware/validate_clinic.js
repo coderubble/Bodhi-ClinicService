@@ -6,5 +6,5 @@ exports.validate_clinic = () => [
   check("street", "Please provide Street Name/No.").exists(),
   check("city", "Please provide City").exists(),
   check("postcode", "Please provide Postal Code").exists(),
-  check("contact_no", "Please provide Contact Number").exists()
+  check("contact_no", "Please provide Contact Number").exists(),
 ];

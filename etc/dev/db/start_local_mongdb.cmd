@@ -1,1 +1,0 @@
-C:\Softwares\MongoDB\bin\mongod --dbpath ./data/

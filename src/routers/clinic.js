@@ -4,8 +4,8 @@ const Clinic = require("../models/clinic");
 const { validationResult } = require("express-validator/check");
 const { validate_clinic } = require("../middleware/validate_clinic");
 const redis = require("redis");
-router.post("/", validate_clinic(), (req, res) => {
-  const validationErrors = validationResult(req);
+router.post("/", [validate_clinic()], (req, res) => {
+  let validationErrors = validationResult(req);
   if (!validationErrors.isEmpty()) {
     res.status(400).send(`Validation errors: ${JSON.stringify(validationErrors.array())}`);
   } else {
@@ -19,13 +19,14 @@ router.post("/", validate_clinic(), (req, res) => {
     clinic.contact_no = body.contact_no;
     clinic.about = body.about;
     clinic.doctors = body.doctors.map(doctor => {
-      const { first_name, last_name, address, contact_no, about } = doctor;
+      const { first_name, last_name, address, contact_no, about, schedule } = doctor;
       return {
         first_name,
         last_name,
         address,
         contact_no,
-        about
+        about,
+        schedule
       };
     });
     clinic.save().then((clinic_details) => {
@@ -37,7 +38,7 @@ router.post("/", validate_clinic(), (req, res) => {
 })
 
 router.get("/", (req, res) => {
-  Clinic.find().then((clinic) => {
+  Clinic.find().skip(0).limit(10).then((clinic) => {
     res.json({
       status: "success",
       message: "Clinic details retrieved successfully",

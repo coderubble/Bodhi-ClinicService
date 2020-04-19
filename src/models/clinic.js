@@ -1,5 +1,5 @@
 const mongoose = require("../db/database");
-const uuid=require
+const uuid = require
 const Schema = mongoose.Schema;
 const clinicSchema = new Schema({
   name: {
@@ -47,7 +47,11 @@ const clinicSchema = new Schema({
       type: String,
       required: true
     },
-    about: String
+    about: String,
+    schedule: {
+      type: String,
+      required: true
+    }
   }]
 })
 const Clinic = mongoose.model('clinic', clinicSchema);

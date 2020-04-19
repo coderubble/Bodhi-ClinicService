@@ -172,37 +172,6 @@
       }
     },
     "/doctor/{id}": {
-      "post": {
-        "tags": [
-          "Doctor"
-        ],
-        "summary": "Insert doctor details into system",
-        "description": "This can only be done by the logged in user.",
-        "operationId": "insertDcotor",
-        "produces": "application/xml,application/json",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": "true",
-            "description": "Enter Clinic ID"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": "true",
-            "description": "Enter doctor details"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/Dcotor"
-            }
-          }
-        }
-      },
       "get": {
         "tags": [
           "Doctor"
