@@ -144,6 +144,33 @@
         }
       }
     },
+    "/clinic/{id}": {
+      "get": {
+        "tags": [
+          "Clinic"
+        ],
+        "summary": "View Clinic details by ID",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "viewClinicByName",
+        "produces": "application/xml,application/json",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": "true",
+            "description": "View Clinic Details"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Clinic"
+            }
+          }
+        }
+      }
+    },
     "/clinic/city/{city}": {
       "get": {
         "tags": [

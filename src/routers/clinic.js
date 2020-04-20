@@ -3,7 +3,7 @@ const router = express.Router();
 const Clinic = require("../models/clinic");
 const { validationResult } = require("express-validator/check");
 const { validate_clinic } = require("../middleware/validate_clinic");
-const redis = require("redis");
+const { cacheRead, cacheWrite } = require("../db/cache");
 router.post("/", [validate_clinic()], (req, res) => {
   let validationErrors = validationResult(req);
   if (!validationErrors.isEmpty()) {
@@ -38,7 +38,7 @@ router.post("/", [validate_clinic()], (req, res) => {
 })
 
 router.get("/", (req, res) => {
-  Clinic.find().skip(0).limit(10).then((clinic) => {
+  Clinic.find().skip(0).limit(10).select({ "name": 1 }).then((clinic) => {
     res.json({
       status: "success",
       message: "Clinic details retrieved successfully",
@@ -54,44 +54,39 @@ router.get("/", (req, res) => {
 
 router.get("/name/:name", (req, res) => {
   const name = req.params.name.toLowerCase();
-  Clinic.find({ name }).skip(0).limit(10).select({ "name": 1 }).then((clinic) => {
+  Clinic.find({ name: { $regex: name, $options: 'i' } }).skip(0).limit(10).select({ "name": 1 }).then((clinic) => {
     res.send(clinic);
   }).catch((error) => {
     res.status(400).send({ message: error.message || "Error occurred while retrieving clinic data." });
   });
 });
 
+router.get("/:id", (req, res) => {
+  const id = req.params.id;
+  cacheRead(id, function (err, result) {
+    if (!result) {
+      Clinic.findById(id).then((clinic) => {
+        cacheWrite(id, JSON.stringify(clinic), function (err, reply) {
+          if (err) {
+            console.log(`Cache error :${err}`);
+          }
+          res.send(clinic);
+        });
+      }).catch((err) => {
+        res.status(400).send({ message: err.message || "Error occurred while retrieving clinic data." });
+      });
+    } else {
+      res.send(JSON.parse(result));
+    }
+  });
+});
+
 router.get("/city/:city", (req, res) => {
   const city = req.params.city;
-  // Clinic.find({ city }).skip(0).limit(10).select({ "name": 1, "city": 1 }).then((clinic) => {
-  let client = redis.createClient({ port: 6379, host: "192.168.99.100" });
-  client.on('connect', function () {
-    console.log("Connected to Redis");
-  })
-
-  client.get("clinic", function (err, obj) {
-    if (!obj) {
-      console.log('Data not in Redis cache');
-      client.set("clinic", '', function () {
-        console.log('Set key');
-      })
-      Clinic.find({ city }).skip(0).limit(10).select({ "name": 1, "city": 1 }).then((clinic) => {
-        Object.entries(clinic).forEach(([key, value]) => console.log(`>>>>>>${key}: ${value}`));
-        client.set("clinic", JSON.stringify(clinic), function (err, reply) {
-          if (err) {
-            console.log(`Redis set error:${err}`);
-          }
-          console.log(`Redis data saved:${reply}`);
-        })
-        res.send(clinic);
-      }).catch((error) => {
-        res.status(400).send({ message: error.message || "Error occurred while retrieving clinic data." });
-      });
-    }
-    else {
-      console.log("From redis cache");
-      res.send(JSON.parse(obj));
-    }
+  Clinic.find({ city }).skip(0).limit(10).select({ "name": 1, "city": 1 }).then((clinic) => {
+    res.send(clinic);
+  }).catch((error) => {
+    res.status(400).send({ message: error.message || "Error occurred while retrieving clinic data." });
   });
 });
 
