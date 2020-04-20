@@ -23,3 +23,7 @@ This Service is used to manage clinic & doctor details of Bodhi application.
   }]
 }
 ```
+#### To-Do
+```
+Set an alarm when Cache_evict function could not delete cache
+```

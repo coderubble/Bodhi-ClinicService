@@ -3,7 +3,7 @@ const router = express.Router();
 const Clinic = require("../models/clinic");
 const { validationResult } = require("express-validator/check");
 const { validate_clinic } = require("../middleware/validate_clinic");
-const { cacheRead, cacheWrite } = require("../db/cache");
+const { cacheRead, cacheWrite, cacheEvict } = require("../db/cache");
 router.post("/", [validate_clinic()], (req, res) => {
   let validationErrors = validationResult(req);
   if (!validationErrors.isEmpty()) {
@@ -91,8 +91,37 @@ router.get("/city/:city", (req, res) => {
 });
 
 router.put("/", validate_clinic(), (req, res) => {
-  Clinic.findOneAndUpdate({ name: req.body.name }, { address: req.body.address, contact_no: req.body.contact_no, about: req.body.about }).then((clinic_details) => {
-    res.status(201).send(clinic_details);
+  const body = req.body;
+  const doctors = body.doctors.map((doctor) => {
+    const { _id, first_name, last_name, address, contact_no, about, schedule } = doctor;
+    return {
+      _id,
+      first_name,
+      last_name,
+      address,
+      contact_no,
+      about,
+      schedule
+    };
+  })
+
+  Clinic.findByIdAndUpdate(req.body._id,
+    {
+      name: body.name,
+      email_id: body.email_id,
+      street: body.street,
+      city: body.city,
+      postcode: body.postcode,
+      contact_no: body.contact_no,
+      contact_no: body.contact_no,
+      about: body.about,
+      doctors
+    }, {
+    new: true
+  }).then((clinic_details) => {
+    cacheEvict(req.body._id,function (err, result){
+      res.status(201).send(clinic_details);
+    })
   }).catch((error) => {
     res.status(400).send(error);
   })

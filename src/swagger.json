@@ -151,7 +151,7 @@
         ],
         "summary": "View Clinic details by ID",
         "description": "This can only be done by the logged in user.",
-        "operationId": "viewClinicByName",
+        "operationId": "viewClinicByID",
         "produces": "application/xml,application/json",
         "parameters": [
           {
@@ -176,7 +176,7 @@
         "tags": [
           "Clinic"
         ],
-        "summary": "View Clinic details by city Name/No.",
+        "summary": "View Clinic details by City Name",
         "description": "This can only be done by the logged in user.",
         "operationId": "viewClinicBycity",
         "produces": "application/xml,application/json",

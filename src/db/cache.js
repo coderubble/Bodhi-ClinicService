@@ -22,6 +22,14 @@ function nocache(cb) {
   return false;
 }
 
+const cacheEvict = (id, cb) => {
+  if (!nocache(cb)) {
+    cache_client.del(id, (error, result) => {
+      cb(error, result);
+    });
+  }
+};
+
 const cacheRead = (id, cb) => {
   if (!nocache(cb)) {
     cache_client.get(id, (error, result) => {
@@ -38,4 +46,4 @@ const cacheWrite = (id, data, cb) => {
   }
 };
 
-module.exports = { cacheRead, cacheWrite };
+module.exports = { cacheRead, cacheWrite, cacheEvict };
