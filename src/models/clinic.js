@@ -1,5 +1,4 @@
 const mongoose = require("../db/database");
-const uuid = require
 const Schema = mongoose.Schema;
 const clinicSchema = new Schema({
   name: {
@@ -38,6 +37,10 @@ const clinicSchema = new Schema({
     last_name: {
       type: String,
       required: true,
+    },
+    joining_date: {
+      type: Date,
+      required: true
     },
     address: {
       type: String,
