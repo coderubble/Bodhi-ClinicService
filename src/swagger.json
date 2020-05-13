@@ -26,8 +26,8 @@
       "description": "Access token is missing or invalid"
     }
   },
-  "host": "localhost:3000",
-  "basePath": "/",
+  "host": "localhost:3002",
+  "basePath": "/api/v1",
   "tags": [
     {
       "name": "Clinic",
@@ -144,6 +144,39 @@
         }
       }
     },
+    "/clinic/schedule/{clinic_id}/{doctor_id}": {
+      "get": {
+        "tags": [
+          "Clinic"
+        ],
+        "summary": "Get Schedule by Doctor ID and Date",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "getScheduleByIdAndDate",
+        "produces": "application/xml,application/json",
+        "parameters": [
+          {
+            "name": "clinic_id",
+            "in": "path",
+            "required": "true",
+            "description": "Enter Clinic ID"
+          },
+          {
+            "name": "doctor_id",
+            "in": "path",
+            "required": "true",
+            "description": "Enter Doctor ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Clinic"
+            }
+          }
+        }
+      }
+    },
     "/clinic/{id}": {
       "get": {
         "tags": [
@@ -198,7 +231,7 @@
         }
       }
     },
-    "/doctor/{id}": {
+    "clinic/doctor/{id}": {
       "get": {
         "tags": [
           "Doctor"

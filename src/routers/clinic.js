@@ -4,62 +4,6 @@ const Clinic = require("../models/clinic");
 const { validationResult } = require("express-validator/check");
 const { validate_clinic } = require("../middleware/validate_clinic");
 const { cacheRead, cacheWrite, cacheEvict } = require("../db/cache");
-router.post("/", [validate_clinic()], (req, res) => {
-  let validationErrors = validationResult(req);
-  if (!validationErrors.isEmpty()) {
-    res.status(400).send(`Validation errors: ${JSON.stringify(validationErrors.array())}`);
-  } else {
-    var clinic = new Clinic();
-    const body = req.body;
-    clinic.name = body.name;
-    clinic.email_id = body.email_id;
-    clinic.street = body.street;
-    clinic.city = body.city;
-    clinic.postcode = body.postcode;
-    clinic.contact_no = body.contact_no;
-    clinic.about = body.about;
-    clinic.doctors = body.doctors.map(doctor => {
-      const { first_name, last_name, address, contact_no, about, schedule } = doctor;
-      return {
-        first_name,
-        last_name,
-        address,
-        contact_no,
-        about,
-        schedule
-      };
-    });
-    clinic.save().then((clinic_details) => {
-      res.status(201).send(clinic_details);
-    }).catch((error) => {
-      res.status(400).send(error);
-    })
-  }
-})
-
-router.get("/", (req, res) => {
-  Clinic.find().skip(0).limit(10).select({ "name": 1 }).then((clinic) => {
-    res.json({
-      status: "success",
-      message: "Clinic details retrieved successfully",
-      data: clinic
-    });
-  }).catch((error) => {
-    res.json({
-      status: "error",
-      message: error,
-    });
-  });
-});
-
-router.get("/name/:name", (req, res) => {
-  const name = req.params.name.toLowerCase();
-  Clinic.find({ name: { $regex: name, $options: 'i' } }).skip(0).limit(10).select({ "name": 1 }).then((clinic) => {
-    res.send(clinic);
-  }).catch((error) => {
-    res.status(400).send({ message: error.message || "Error occurred while retrieving clinic data." });
-  });
-});
 
 router.get("/:id", (req, res) => {
   const id = req.params.id;
