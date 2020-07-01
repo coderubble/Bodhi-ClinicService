@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
+const Clinic = require("../models/clinic");
 const { validationResult } = require("express-validator/check");
 const { validate_clinic } = require("../middleware/validate_clinic");
-const { insertClinicDetails, getClinicDetails, getClinicDetailsByName, getSchedule } = require("../service/clinic.service");
-//const { cacheRead, cacheWrite, cacheEvict } = require("../db/cache");
+const { insertClinicDetails, getClinicDetails, getClinicDetailsByName, getSchedule, getAllClinicNames } = require("../service/clinic.service");
+const { cacheRead, cacheWrite, cacheEvict, cacheReadByPattern, cacheWriteAll } = require("../db/cache");
 
-router.post("/", [validate_clinic()], (req, res) => {
+router.post("/", [ validate_clinic() ], (req, res) => {
   let validationErrors = validationResult(req);
   if (!validationErrors.isEmpty()) {
     res.status(400).send(`Validation errors: ${JSON.stringify(validationErrors.array())}`);
@@ -37,22 +38,40 @@ router.get("/", (req, res) => {
   })
 });
 
-router.get("/name/:name", (req, res) => {
-  const name = req.params.name.toLowerCase();
-  getClinicDetailsByName(name, (error, result) => {
-    if (result) {
-      res.json({
-        status: 200,
-        message: "Clinic details retrieved successfully",
-        data: result
+router.get("/id/:id", (req, res) => {
+  const id = req.params.id;
+  cacheRead(id, function (err, result) {
+    if (!result) {
+      Clinic.findById(id).then((clinic) => {
+        const key = clinic.name + '|' + clinic.postcode;
+        cacheWrite(key, JSON.stringify(clinic), function (err, reply) {
+          if (err) {
+            console.log(`Cache error :${err}`);
+          }
+          res.send(clinic);
+        });
+      }).catch((err) => {
+        res.status(400).send({ message: err.message || "Error occurred while retrieving clinic data." });
       });
     } else {
-      res.json({
-        status: 400,
-        message: error,
-      });
+      console.log(`Result:${result}`);
+      res.send(JSON.parse(result));
     }
-  })
+  });
+});
+
+router.get("/name/:name", async (req, res) => {
+  const name = req.params.name.toLowerCase();
+  await cacheReadByPattern(name, async function (err, result) {
+    if (!result) {
+      getClinicDetailsByName(name, (error, result) => {
+        if (error) res.status(400).send({ message: err.message || "Error occurred while retrieving clinic data." });
+        res.send(result);
+      });
+    } else {
+      res.send(result.map(a => JSON.parse(a)));
+    }
+  });
 });
 
 router.get("/schedule/:clinic_id/:doctor_id", (req, res) => {
@@ -62,6 +81,34 @@ router.get("/schedule/:clinic_id/:doctor_id", (req, res) => {
     } else {
       res.status(400).send(error);
     }
+  })
+});
+
+/* To pre-load all Clinic Names|Postcode with value ClinicId to Redis Cache */
+router.get("/loadCache/", (req, res) => {
+  getAllClinicNames((err, result) => {
+    if (err) res.status(400).send({ message: err.message || "Error occurred while retrieving clinic names." });
+    result.map(clinic => {
+      const key = clinic.name + ',' + clinic.postcode;
+      cacheWriteAll(key, clinic._id.toString(), function (err, reply) {
+        if (err) {
+          console.log(`Cache error :${err}`);
+        }
+      })
+    })
+    res.send(result);
+  });
+});
+
+/* To read preloaded ClinicName|Postcode from Cache on Search */
+
+router.get("/readFromCache/:clinic_name", (req, res) => {
+  cacheReadByPattern(req.params.clinic_name, function (err, result) {
+    if (err) res.status(400).send({ message: err.message || "Error occurred while retrieving clinic names." });
+    res.send(result.map(data => {
+      console.log(`Data:${JSON.stringify(data)}`)
+      return data
+    }));
   })
 });
 

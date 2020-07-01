@@ -1,4 +1,6 @@
 const redis = require("redis");
+const { promisify } = require("util");
+const { getClinicDetails } = require("../service/clinic.service");
 
 let cache_client = undefined;
 try {
@@ -38,6 +40,26 @@ const cacheRead = (id, cb) => {
   }
 };
 
+const cacheReadByPattern = (key, cb) => {
+  if (!nocache(cb)) {
+    cache_client.keys(`${key}*`, async function (err, keys) {
+      let ccp = promisify(cache_client.get).bind(cache_client);
+      let clinic_data = await Promise.all(keys.map(async key => {
+        return { key, id: await ccp(key) }
+      }));
+      cb(err, clinic_data);
+    })
+  }
+}
+
+const cacheWriteAll = (key, data, cb) => {
+  if (!nocache(cb)) {
+    cache_client.set(key, data, (error, result) => {
+      cb(error, result);
+    });
+  }
+}
+
 const cacheWrite = (id, data, cb) => {
   if (!nocache(cb)) {
     cache_client.set(id, data, (error, result) => {
@@ -46,4 +68,4 @@ const cacheWrite = (id, data, cb) => {
   }
 };
 
-module.exports = { cacheRead, cacheWrite, cacheEvict };
+module.exports = { cacheRead, cacheWrite, cacheEvict, cacheReadByPattern, cacheWriteAll };

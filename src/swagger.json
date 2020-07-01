@@ -38,21 +38,13 @@
       "description": "API for Doctor details in the system"
     }
   ],
-  "schemes": [
-    "http"
-  ],
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
-  ],
+  "schemes": ["http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
   "paths": {
     "/clinic": {
       "get": {
-        "tags": [
-          "Clinic"
-        ],
+        "tags": ["Clinic"],
         "summary": "Get all clinics in system",
         "description": "This can only be done by the logged in user.",
         "operationId": "viewClinics",
@@ -67,9 +59,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Clinic"
-        ],
+        "tags": ["Clinic"],
         "summary": "Insert clinic details into system",
         "description": "This can only be done by the logged in user.",
         "operationId": "insertClinic",
@@ -92,9 +82,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Clinic"
-        ],
+        "tags": ["Clinic"],
         "summary": "Update clinic details",
         "description": "This can only be done by the logged in user.",
         "operationId": "updateClinic",
@@ -119,9 +107,7 @@
     },
     "/clinic/name/{name}": {
       "get": {
-        "tags": [
-          "Clinic"
-        ],
+        "tags": ["Clinic"],
         "summary": "View Clinic details by name",
         "description": "This can only be done by the logged in user.",
         "operationId": "viewClinicByName",
@@ -144,11 +130,51 @@
         }
       }
     },
+    "/clinic/loadCache/": {
+      "get": {
+        "tags": ["Clinic"],
+        "summary": "Load Cache",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "loadCache",
+        "produces": "application/xml,application/json",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Clinic"
+            }
+          }
+        }
+      }
+    },
+    "/clinic/readFromCache/{clinic_name}": {
+      "get": {
+        "tags": ["Clinic"],
+        "summary": "Read from Cache",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "readFromCache",
+        "produces": "application/xml,application/json",
+        "parameters": [
+          {
+            "name": "clinic_name",
+            "in": "path",
+            "required": "true",
+            "description": "Enter Clinic Name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Clinic"
+            }
+          }
+        }
+      }
+    },
     "/clinic/schedule/{clinic_id}/{doctor_id}": {
       "get": {
-        "tags": [
-          "Clinic"
-        ],
+        "tags": ["Clinic"],
         "summary": "Get Schedule by Doctor ID and Date",
         "description": "This can only be done by the logged in user.",
         "operationId": "getScheduleByIdAndDate",
@@ -177,11 +203,9 @@
         }
       }
     },
-    "/clinic/{id}": {
+    "/clinic/id/{id}": {
       "get": {
-        "tags": [
-          "Clinic"
-        ],
+        "tags": ["Clinic"],
         "summary": "View Clinic details by ID",
         "description": "This can only be done by the logged in user.",
         "operationId": "viewClinicByID",
@@ -206,9 +230,7 @@
     },
     "/clinic/city/{city}": {
       "get": {
-        "tags": [
-          "Clinic"
-        ],
+        "tags": ["Clinic"],
         "summary": "View Clinic details by City Name",
         "description": "This can only be done by the logged in user.",
         "operationId": "viewClinicBycity",
@@ -233,9 +255,7 @@
     },
     "clinic/doctor/{id}": {
       "get": {
-        "tags": [
-          "Doctor"
-        ],
+        "tags": ["Doctor"],
         "summary": "View Doctor Details",
         "description": "This can only be done by the logged in user.",
         "operationId": "viewDoctors",
@@ -261,9 +281,7 @@
   },
   "definitions": {
     "Clinic": {
-      "required": [
-        "name"
-      ],
+      "required": ["name"],
       "properties": {
         "name": {
           "type": "string",
@@ -281,10 +299,7 @@
       }
     },
     "Doctor": {
-      "required": [
-        "first_name",
-        "last_name"
-      ],
+      "required": ["first_name", "last_name"],
       "properties": {
         "first_name": {
           "type": "string",

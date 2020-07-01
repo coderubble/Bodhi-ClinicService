@@ -7,10 +7,12 @@ const { cacheRead, cacheWrite, cacheEvict } = require("../db/cache");
 
 router.get("/:id", (req, res) => {
   const id = req.params.id;
+  console.log(`id:${id}`);
   cacheRead(id, function (err, result) {
     if (!result) {
       Clinic.findById(id).then((clinic) => {
         cacheWrite(id, JSON.stringify(clinic), function (err, reply) {
+          console.log(`cache reply:${reply}`);
           if (err) {
             console.log(`Cache error :${err}`);
           }
@@ -63,7 +65,7 @@ router.put("/", validate_clinic(), (req, res) => {
     }, {
     new: true
   }).then((clinic_details) => {
-    cacheEvict(req.body._id,function (err, result){
+    cacheEvict(req.body._id, function (err, result) {
       res.status(201).send(clinic_details);
     })
   }).catch((error) => {

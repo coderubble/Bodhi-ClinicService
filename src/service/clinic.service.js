@@ -35,6 +35,13 @@ exports.getClinicDetails = async function (callback) {
   });
 };
 
+exports.getAllClinicNames = async function (callback) {
+  await Clinic.find().select({ "name": '1', "postcode": '1' }).exec(function (error, clinic) {
+    if (error) callback(error);
+    callback(null, clinic);
+  })
+}
+
 exports.getClinicDetailsByName = async function (name, callback) {
   await Clinic.find({ name: { $regex: name, $options: 'i' } }).skip(0).limit(10).select({ "name": 1 }).exec(function (error, clinic) {
     if (error) callback(error);
@@ -45,7 +52,7 @@ exports.getClinicDetailsByName = async function (name, callback) {
 exports.getSchedule = async function ({ clinic_id, doctor_id }, callback) {
   await Clinic.find({ "_id": ObjectId(clinic_id) }).select({ "doctors._id": 1, "doctors.schedule": 1, "doctors.joining_date": 1 }).exec(function (error, clinic) {
     if (clinic) {
-      const drDetails = clinic[0].doctors.find(doctor => doctor._id == doctor_id);
+      const drDetails = clinic[ 0 ].doctors.find(doctor => doctor._id == doctor_id);
       callback(null, drDetails);
     } else {
       console.log(`Error:${JSON.stringify(error)}`);
