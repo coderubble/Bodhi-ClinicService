@@ -6,6 +6,7 @@ const { validate_clinic } = require("../middleware/validate_clinic");
 const { insertClinicDetails, getClinicDetails, getClinicDetailsByName, getSchedule, getAllClinicNames } = require("../service/clinic.service");
 const { cacheRead, cacheWrite, cacheEvict, cacheReadByPattern, cacheWriteAll } = require("../db/cache");
 
+// Insert New Clinic
 router.post("/", [ validate_clinic() ], (req, res) => {
   let validationErrors = validationResult(req);
   if (!validationErrors.isEmpty()) {
@@ -21,6 +22,7 @@ router.post("/", [ validate_clinic() ], (req, res) => {
   }
 });
 
+// View All Clinics
 router.get("/", (req, res) => {
   getClinicDetails((error, result) => {
     if (result) {
@@ -38,13 +40,13 @@ router.get("/", (req, res) => {
   })
 });
 
+//View Clinic Details by ID & write to cache with ID as key
 router.get("/id/:id", (req, res) => {
   const id = req.params.id;
   cacheRead(id, function (err, result) {
     if (!result) {
       Clinic.findById(id).then((clinic) => {
-        const key = clinic.name + '|' + clinic.postcode;
-        cacheWrite(key, JSON.stringify(clinic), function (err, reply) {
+        cacheWrite(id, JSON.stringify(clinic), function (err, reply) {
           if (err) {
             console.log(`Cache error :${err}`);
           }
@@ -60,20 +62,28 @@ router.get("/id/:id", (req, res) => {
   });
 });
 
-router.get("/name/:name", async (req, res) => {
-  const name = req.params.name.toLowerCase();
-  await cacheReadByPattern(name, async function (err, result) {
-    if (!result) {
-      getClinicDetailsByName(name, (error, result) => {
-        if (error) res.status(400).send({ message: err.message || "Error occurred while retrieving clinic data." });
-        res.send(result);
-      });
-    } else {
-      res.send(result.map(a => JSON.parse(a)));
-    }
-  });
-});
+//View Doctors & Timeslots by Clinic ID & Selected date
 
+router.get("/getDoctorDetails/:clinic_id/:given_date", (req, res) => {
+
+})
+
+// //View Clinic by name :: same as readfrom cache
+// router.get("/name/:name", async (req, res) => {
+//   const name = req.params.name.toLowerCase();
+//   await cacheReadByPattern(name, async function (err, result) {
+//     if (!result) {
+//       getClinicDetailsByName(name, (error, result) => {
+//         if (error) res.status(400).send({ message: err.message || "Error occurred while retrieving clinic data." });
+//         res.send(result);
+//       });
+//     } else {
+//       res.send(result.map(a => a));
+//     }
+//   });
+// });
+
+//View Dr schedule by Clinic ID  & Dr ID
 router.get("/schedule/:clinic_id/:doctor_id", (req, res) => {
   getSchedule(req.params, (error, result) => {
     if (result) {
@@ -100,7 +110,7 @@ router.get("/loadCache/", (req, res) => {
   });
 });
 
-/* To read preloaded ClinicName|Postcode from Cache on Search */
+/* To read preloaded ClinicName|Postcode from Cache on Search by name (Pattern) */
 
 router.get("/readFromCache/:clinic_name", (req, res) => {
   cacheReadByPattern(req.params.clinic_name, function (err, result) {

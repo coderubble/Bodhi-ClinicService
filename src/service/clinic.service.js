@@ -53,6 +53,7 @@ exports.getSchedule = async function ({ clinic_id, doctor_id }, callback) {
   await Clinic.find({ "_id": ObjectId(clinic_id) }).select({ "doctors._id": 1, "doctors.schedule": 1, "doctors.joining_date": 1 }).exec(function (error, clinic) {
     if (clinic) {
       const drDetails = clinic[ 0 ].doctors.find(doctor => doctor._id == doctor_id);
+      // console.log(`Doctor details:${drDetails}`);
       callback(null, drDetails);
     } else {
       console.log(`Error:${JSON.stringify(error)}`);
@@ -60,3 +61,13 @@ exports.getSchedule = async function ({ clinic_id, doctor_id }, callback) {
     }
   });
 };
+
+exports.getDoctorDetails = async function ({ clinic_id, doctor_id }, callback) {
+  function getSchedule({ clinic_id, doctor_id }, callback) {
+    axios.get(`${process.env.CLINICSERVICE_URL}/clinic/schedule/${clinic_id}/${doctor_id}`).then((response) => {
+      callback(null, response);
+    }).catch((error) => {
+      callback(error);
+    })
+  }
+}
