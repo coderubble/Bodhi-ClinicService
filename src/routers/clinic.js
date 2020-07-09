@@ -12,7 +12,7 @@ router.get("/:id", (req, res) => {
     if (!result) {
       Clinic.findById(id).then((clinic) => {
         cacheWrite(id, JSON.stringify(clinic), function (err, reply) {
-          console.log(`cache reply:${reply}`);
+          // console.log(`cache reply:${reply}`);
           if (err) {
             console.log(`Cache error :${err}`);
           }

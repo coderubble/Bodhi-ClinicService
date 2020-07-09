@@ -133,9 +133,43 @@
     "/clinic/loadCache/": {
       "get": {
         "tags": ["Clinic"],
-        "summary": "Load Cache",
+        "summary": "Load Clinic Name,postcode (as key) & Clinic ID (as value) to Cache",
         "description": "This can only be done by the logged in user.",
         "operationId": "loadCache",
+        "produces": "application/xml,application/json",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Clinic"
+            }
+          }
+        }
+      }
+    },
+    "/clinic/loadClinic/toCache": {
+      "get": {
+        "tags": ["Clinic"],
+        "summary": "Load Clinic ID (as key) & Clinic Name (as value) to Cache",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "loadClinicToCache",
+        "produces": "application/xml,application/json",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Clinic"
+            }
+          }
+        }
+      }
+    },
+    "/clinic/loadDoctor/toCache": {
+      "get": {
+        "tags": ["Clinic"],
+        "summary": "Load Doctor ID(as key) & Name(as value) to Cache",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "loadDoctorToCache",
         "produces": "application/xml,application/json",
         "responses": {
           "200": {
@@ -160,6 +194,31 @@
             "in": "path",
             "required": "true",
             "description": "Enter Clinic Name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Clinic"
+            }
+          }
+        }
+      }
+    },
+    "/clinic/readClinicName/{clinic_id}": {
+      "get": {
+        "tags": ["Clinic"],
+        "summary": "Read from Cache",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "readClinicName",
+        "produces": "application/xml,application/json",
+        "parameters": [
+          {
+            "name": "clinic_id",
+            "in": "path",
+            "required": "true",
+            "description": "Enter Clinic ID"
           }
         ],
         "responses": {

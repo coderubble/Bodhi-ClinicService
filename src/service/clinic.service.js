@@ -29,9 +29,20 @@ exports.insertClinicDetails = async function ({ name, email_id, street, city, po
 };
 
 exports.getClinicDetails = async function (callback) {
-  await Clinic.find().select({ "name": '1' }).skip(0).limit(10).exec(function (error, clinic) {
+  await Clinic.find().select({ "name": '1' }).exec(function (error, clinic) {
     if (error) callback(error);
     callback(null, clinic);
+  });
+};
+
+exports.getDoctorData = async function (callback) {
+  await Clinic.find().select({ "doctors._id": 1, "doctors.first_name": 1, "doctors.last_name": 1 }).exec(function (error, clinic) {
+    if (error) callback(error);
+    const drDetails = clinic.map(details => {
+      return details.doctors;
+    })
+    // drDetails.flatMap(dr => console.log(dr))
+    callback(null, drDetails);
   });
 };
 
